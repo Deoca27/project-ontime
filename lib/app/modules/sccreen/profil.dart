@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 // import 'package:get/route_manager.dart';
 import 'package:get/get.dart';
 import 'package:myapp/app/controllers/auth_controller.dart';
-import 'package:myapp/app/modules/login/views/login_view.dart';
+// import 'package:myapp/app/modules/login/views/login_view.dart';
 // import 'package:project_ontime/event/event_pref.dart';
 // import 'package:project_ontime/screen/login.dart';
 

@@ -11,11 +11,16 @@ import 'app/routes/app_pages.dart';
 // Import the generated file
 import 'firebase_options.dart';
 
+// import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
 void main() async {
-  WidgetsFlutterBinding();
+  // WidgetsFlutterBinding();
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform
   );
+  await initializeDateFormatting('id_ID', null);
   runApp(MyApp());
 }
 

@@ -18,8 +18,8 @@ class LoginView extends GetView<LoginController> {
             SizedBox(height: 20),
             Align(
               alignment: Alignment.centerLeft,
-              child: Image.network(
-              "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiG7QX8TlmfwYVWWuPOU5YOKDVv7sPS6IREk9S3ZUth7isqBW2crF5FBiFzfTFp9IRC_fQgv9_SnMbFmscGZYTCWozUM7CSSK00SJopovgPHm4nOPFlI7Hzdq9Yrw6_FB0R__pTJsFMfosnR-d24Pw0wh9n0IRT-pUALh9CuXJWFwJlZ8DouC3QxFYcuII/s985/Screenshot%202024-11-23%20151803.png",
+              child: Image.asset(
+              "assets/images/logo.png",
               height: 50,
             ),
             ),
