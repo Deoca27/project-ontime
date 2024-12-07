@@ -1,10 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/app/modules/sccreen/home_screen.dart';
 import 'package:myapp/app/modules/sccreen/kehadiran.dart';
 import 'package:myapp/app/modules/sccreen/profil.dart';
-// import 'package:project_ontime/screen/kehadiran.dart';
-// import 'package:project_ontime/screen/profil.dart';
-// import 'package:project_ontime/screen/home_screen.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({super.key});
@@ -16,18 +15,47 @@ class DashboardView extends StatefulWidget {
 class _DashboardViewState extends State<DashboardView> {
   int _selectedIndex = 0;
   String _title = '';
+  String username = '';
+  String prodi = '';
 
   List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     Kehadiran(),
     Profil(),
   ];
+
   @override
   void initState() {
     super.initState();
     _title = 'default';
+    _fetchUserData(); // Panggil fungsi untuk mengambil data pengguna
   }
 
+  Future<void> _fetchUserData() async {
+    try {
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        String uid = currentUser.uid;
+
+        // Ambil data dari Firestore
+        DocumentSnapshot userDoc =
+            await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+        if (userDoc.exists) {
+          setState(() {
+            username = userDoc.get('username') ?? 'Nama tidak ditemukan';
+            prodi = userDoc.get('prodi') ?? 'Prodi tidak ditemukan';
+          });
+        } else {
+          print("User document tidak ditemukan.");
+        }
+      }
+    } catch (e) {
+      print("Error mengambil data pengguna: $e");
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -35,12 +63,13 @@ class _DashboardViewState extends State<DashboardView> {
         child: AppBar(
           elevation: 2,
           toolbarHeight: 60,
-          backgroundColor: Color.fromARGB(255, 255, 255, 255),
+          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
           centerTitle: true,
-          title: _title == 'default' ? Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
+          title: _title == 'default'
+              ? Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
                       Flexible(
                         flex: 1,
                         child: Column(
@@ -49,21 +78,11 @@ class _DashboardViewState extends State<DashboardView> {
                           children: <Widget>[
                             Row(
                               children: [
-                                // Text(
-                                //   'Hai, ',
-                                //   overflow: TextOverflow.ellipsis,
-                                //   maxLines: 1,
-                                //   style: TextStyle(
-                                //     fontSize: 20,
-                                //     fontWeight: FontWeight.bold,
-                                //     color: Asset.colorPrimary,
-                                //   ),
-                                // ),
                                 Text(
-                                  'Anya Melfissa',
+                                  username,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
@@ -71,46 +90,45 @@ class _DashboardViewState extends State<DashboardView> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 5,),
+                            const SizedBox(
+                              height: 5,
+                            ),
                             Text(
-                              'S1 - Teknik Komputer',
+                              prodi,
                               maxLines: 1,
                               style: TextStyle(
                                 fontSize: 12,
-                                // fontWeight: FontWeight.bold,
                                 color: Colors.grey[600],
                               ),
                             ),
                           ],
                         ),
                       ),
-                      CircleAvatar(
+                      const CircleAvatar(
                         radius: 30,
-                        // backgroundColor: Colors.black,
                         child: CircleAvatar(
                           radius: 27,
-                          backgroundImage:
-                              AssetImage('assets/images/test.jpg'),
-                              // NetworkImage('url'),
+                          backgroundImage: AssetImage('assets/images/test.jpg'),
                           backgroundColor: Colors.grey,
                         ),
                       ),
                     ],
-            ),
-          )
-          :Text(_title,
-          maxLines: 1,
-          style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
+                  ),
+                )
+              : Text(
+                  _title,
+                  maxLines: 1,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
         ),
-        preferredSize: Size.fromHeight(70.0),
+        preferredSize: const Size.fromHeight(70.0),
       ),
       bottomNavigationBar: ClipRRect(
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(30.0),
           topRight: Radius.circular(30.0),
         ),
@@ -119,9 +137,9 @@ class _DashboardViewState extends State<DashboardView> {
           currentIndex: _selectedIndex,
           showSelectedLabels: true,
           showUnselectedLabels: true,
-          unselectedItemColor: Color.fromARGB(120, 0, 0, 0),
-          selectedItemColor: Color.fromARGB(255, 0, 0, 0),
-          items: [
+          unselectedItemColor: const Color.fromARGB(120, 0, 0, 0),
+          selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
+          items: const [
             BottomNavigationBarItem(
               label: "Beranda",
               icon: Icon(Icons.home),
@@ -134,41 +152,22 @@ class _DashboardViewState extends State<DashboardView> {
               label: "Akun Saya",
               icon: Icon(Icons.person),
             ),
-            // BottomNavigationBarItem(
-            //   label: "navbar 3",
-            //   icon: Icon(Icons.calendar_today),
-            // ),
           ],
         ),
       ),
       body: _widgetOptions.elementAt(_selectedIndex),
     );
   }
+
   void onTabTapped(int index) {
     setState(() {
       _selectedIndex = index;
       switch (index) {
         case 0:
-          {
-            _title = 'default';
-          }
-          break;
         case 1:
-          {
-            _title = 'default';
-          }
-          break;
         case 2:
-          {
-            // _title = 'navbar 2';
-            _title = 'default';
-          }
+          _title = 'default';
           break;
-        // case 3:
-        //   {
-        //     _title = 'navbar 3';
-        //   }
-        //   break;
       }
     });
   }
