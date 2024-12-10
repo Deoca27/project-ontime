@@ -10,7 +10,7 @@ class SignupView extends GetView<SignupController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Signup'),
+        title: const Text('Sign Up'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -22,14 +22,6 @@ class SignupView extends GetView<SignupController> {
               controller: controller.cEmail,
               decoration: InputDecoration(
                 labelText: "Email",
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: controller.cPassword,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: "Password",
               ),
             ),
             const SizedBox(height: 20),
@@ -46,6 +38,14 @@ class SignupView extends GetView<SignupController> {
                 labelText: "Prodi",
               ),
             ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: controller.cPassword,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: "Password",
+              ),
+            ),
             const SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
@@ -56,20 +56,11 @@ class SignupView extends GetView<SignupController> {
                   prodi: controller.cProdi.text,
                 );
               },
-              child: const Text('Daftar'),
-            ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("Sudah Punya Akun?"),
-                TextButton(
-                  onPressed: () {
-                    Get.back();
-                  },
-                  child: Text("Login"),
-                ),
-              ],
+              child: const Text('Sign Up'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromARGB(255, 34, 57, 150),
+                foregroundColor: Colors.white,
+              ),
             ),
           ],
         ),

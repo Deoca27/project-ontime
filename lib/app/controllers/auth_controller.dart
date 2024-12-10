@@ -97,6 +97,11 @@ class AuthController extends GetxController {
           title: "Proses Gagal",
           middleText: "Wrong password provided for that user.",
         );
+      } else {
+        Get.defaultDialog(
+          title: "Terjadi Kesalahan",
+          middleText: "Error: ${e.message}",
+        );
       }
     }
   }

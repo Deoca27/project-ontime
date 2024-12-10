@@ -13,7 +13,7 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ResetPasswordView'),
+        title: const Text('Reset Password'),
         centerTitle: true,
       ),
 
@@ -25,7 +25,7 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
             TextField(
               controller: controller.cEmail,
               decoration: InputDecoration(
-                labelText: "Email",
+                labelText: "Enter Email",
               ),
             ),
             const SizedBox(height: 30),
@@ -37,7 +37,7 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
               },
               child: const Text('Reset Password'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromARGB(255, 105, 150, 34),
+                backgroundColor: Color.fromARGB(255, 34, 57, 150),
                 foregroundColor: Colors.white,
               ),
             ),

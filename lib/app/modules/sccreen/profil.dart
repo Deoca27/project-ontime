@@ -77,12 +77,21 @@ class _ProfilState extends State<Profil> {
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   onPressed: () {
-                    // Logout action
-                    // Get.back();
-                    widget.cAuth.logout();
+                    Get.defaultDialog(
+                      title: "Logout?",
+                      middleText: "Are you sure you want to logout?",
+                      onConfirm: () {
+                        Get.back(); // Tutup dialog
+                        widget.cAuth.logout(); // Panggil fungsi logout
+                      },
+                      onCancel: () {
+                        Get.back(); // Tutup dialog tanpa logout
+                      },
+                    );
                   },
                   child: const Text('Logout'),
                 ),
+                
               ),
             ),
           ],

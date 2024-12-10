@@ -72,8 +72,8 @@ class LoginView extends GetView<LoginController> {
                   suffixIcon: IconButton(
                     icon: Icon(
                       controller.isPasswordHidden.value
-                          ? Icons.visibility_off
-                          : Icons.visibility,
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                     ),
                     onPressed: () {
                       controller.isPasswordHidden.toggle();
@@ -88,7 +88,7 @@ class LoginView extends GetView<LoginController> {
               child: TextButton(
                 child: Text("Forgot Password?"),
                 onPressed: () {
-                  Get.offAllNamed(Routes.RESET_PASSWORD);
+                  Get.toNamed(Routes.RESET_PASSWORD);
                 },
               ),
             ),
@@ -119,7 +119,7 @@ class LoginView extends GetView<LoginController> {
                   onPressed: () {
                     Get.toNamed(Routes.SIGNUP);
                   },
-                  child: Text("Register"),
+                  child: Text("Sign Up"),
                 ),
               ],
             ),
