@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Kehadiran extends StatefulWidget {
   const Kehadiran({super.key});
@@ -9,15 +11,42 @@ class Kehadiran extends StatefulWidget {
 }
 
 class _KehadiranState extends State<Kehadiran> {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-  // Data event kehadiran
-  Map<DateTime, List<String>> _events = {
-    DateTime(2024, 10, 28): ['Hadir'],
-    DateTime(2024, 10, 30): ['Absen'],
-    DateTime(2024, 10, 31): ['Tidak hadir'],
-  };
+  int jumlahHadir = 0;
+  int izinAbsen = 0;
+  int izinSakit = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAttendanceData();
+  }
+
+  Future<void> fetchAttendanceData() async {
+    try {
+      final User? user = auth.currentUser;
+      if (user != null) {
+        final DocumentSnapshot snapshot =
+            await firestore.collection('users').doc(user.uid).get();
+
+        if (snapshot.exists) {
+          final data = snapshot.data() as Map<String, dynamic>;
+          setState(() {
+            jumlahHadir = data['hadir'] ?? 0;
+            izinAbsen = data['alpa'] ?? 0;
+            izinSakit = data['izin'] ?? 0;
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching attendance data: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,33 +56,24 @@ class _KehadiranState extends State<Kehadiran> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Informasi Kehadiran Header
             const Text(
               "Informasi Kehadiran",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(
-              height: 8,
-            ),
-            // Padding(
-            //   padding: const EdgeInsets.all(8.0),
-              // child: 
-              Card(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: ListTile(
-                  title: Text('Semua mata kuliah'),
-                  trailing: Icon(Icons.chevron_right),
-                  onTap: () {
-                    // Tambahkan aksi jika tombol ditekan
-                    // print('Navigasi ke semua mata kuliah');
-                  },
-                ),
+            const SizedBox(height: 8),
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
               ),
-            // ),
-
+              child: ListTile(
+                title: const Text('Semua mata kuliah'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  // Navigasi ke semua mata kuliah
+                },
+              ),
+            ),
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(16),
@@ -72,14 +92,15 @@ class _KehadiranState extends State<Kehadiran> {
                     ),
                     child: const Text(
                       'Jumlah hadir',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const Divider(),
-                  const Text(
-                    '45',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  Text(
+                    '$jumlahHadir',
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -110,9 +131,9 @@ class _KehadiranState extends State<Kehadiran> {
                           ),
                         ),
                         const Divider(),
-                        const Text(
-                          '1',
-                          style: TextStyle(
+                        Text(
+                          '$izinAbsen',
+                          style: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -143,9 +164,9 @@ class _KehadiranState extends State<Kehadiran> {
                           ),
                         ),
                         const Divider(),
-                        const Text(
-                          '0',
-                          style: TextStyle(
+                        Text(
+                          '$izinSakit',
+                          style: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -157,8 +178,6 @@ class _KehadiranState extends State<Kehadiran> {
             const SizedBox(height: 8),
             const Divider(),
             const SizedBox(height: 8),
-
-            // Kalender Kehadiran
             const Text(
               "Tanggal Kehadiran",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -182,23 +201,21 @@ class _KehadiranState extends State<Kehadiran> {
                   });
                 },
                 eventLoader: (day) {
-                  return _events[day] ?? [];
+                  return []; // Tidak ada acara
                 },
                 calendarStyle: CalendarStyle(
                   todayDecoration: BoxDecoration(
                     color: Colors.blue,
-                    shape: BoxShape.circle,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   selectedDecoration: BoxDecoration(
                     color: Colors.green,
-                    shape: BoxShape.circle,
-                  ),
-                  markerDecoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                headerStyle: HeaderStyle(
+                headerStyle: const HeaderStyle(
                   formatButtonVisible: false,
                   titleCentered: true,
                 ),
