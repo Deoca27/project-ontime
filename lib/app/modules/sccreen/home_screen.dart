@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-// import 'package:intl/date_symbol_data_local.dart';
 
 class HomeScreen extends StatelessWidget {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
   void showAlertDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -63,6 +67,30 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  Future<void> handlePresence(BuildContext context) async {
+    try {
+      final User? user = auth.currentUser;
+      if (user != null) {
+        final DocumentReference userDoc = firestore.collection('users').doc(user.uid);
+        final DocumentSnapshot snapshot = await userDoc.get();
+
+        if (snapshot.exists) {
+          final data = snapshot.data() as Map<String, dynamic>;
+          if (data['presensi'] == false) {
+            await userDoc.update({
+              'presensi': true,
+              'hadir': (data['hadir'] ?? 0) + 1,
+              'alpa': ((data['alpa'] ?? 0) - 1).clamp(0, double.infinity),
+            });
+            showAlertDialog(context);
+          }
+        }
+      }
+    } catch (e) {
+      print('Error updating presence: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String todayDate = DateFormat('EEEE, dd MMMM yyyy', 'id_ID').format(DateTime.now());
@@ -97,49 +125,78 @@ class HomeScreen extends StatelessWidget {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.blue[900],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Dasar Komputer Pemrograman - MK021',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+            StreamBuilder<DocumentSnapshot>(
+              stream: firestore.collection('users').doc(auth.currentUser?.uid).snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Text('Terjadi kesalahan.');
+                }
+
+                if (snapshot.hasData && snapshot.data!.exists) {
+                  final data = snapshot.data!.data() as Map<String, dynamic>;
+                  final bool presensi = data['presensi'] ?? false;
+
+                  return Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.blue[900],
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Dr. Imam Drajat, S.Kom., Ph.D.',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    '13:00 WIB - 14:00 WIB',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  SizedBox(height: 8),
-                  Align(
-                    alignment: Alignment.center,
-                    child: ElevatedButton(
-                      onPressed: () => showAlertDialog(context),
-                      child: const Text('Hadir'),
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Dasar Komputer Pemrograman - MK021',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        minimumSize: Size(500, 50),
-                      ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Dr. Imam Drajat, S.Kom., Ph.D.',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          '13:00 WIB - 14:00 WIB',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.center,
+                          child: presensi
+                              ? Text(
+                                  'Anda sudah melakukan presensi',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              : ElevatedButton(
+                                  onPressed: () => handlePresence(context),
+                                  child: const Text('Hadir'),
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    minimumSize: Size(500, 50),
+                                  ),
+                                ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
+                  );
+                }
+
+                return Text('Data tidak ditemukan.');
+              },
             ),
             const SizedBox(height: 16),
             // Jadwal Hari Ini
