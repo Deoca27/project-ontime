@@ -23,6 +23,10 @@ class AuthController extends GetxController {
       'username': username,
       'prodi': prodi,
       'email': emailAddress,
+      'hadir': 0, // Nilai awal hadir
+      'alpa': 0, // Nilai awal alpa
+      'izin': 0, // Nilai awal izin
+      'presensi': false, 
     });
 
     // Mengirim email verifikasi
@@ -60,12 +64,20 @@ class AuthController extends GetxController {
 
       if (credential.user!.emailVerified) {
         // Mengambil data pengguna dari Firestore
+        DocumentReference userDocRef = firestore.collection('users').doc(credential.user!.uid);
         DocumentSnapshot userDoc = await firestore
             .collection('users')
             .doc(credential.user!.uid)
             .get();
 
         if (userDoc.exists) {
+
+          // Update field presensi menjadi false dan alpa +1
+          await userDocRef.update({
+          'presensi': false,
+          'alpa': (userDoc['alpa'] ?? 0) + 1, // Tambahkan 1 ke field alpa
+        });
+
           print("User data: ${userDoc.data()}");
           Get.offAllNamed(Routes.DASHBOARD); // navigasi ke dashboard
         } else {
