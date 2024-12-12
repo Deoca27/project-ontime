@@ -80,7 +80,7 @@ class HomeScreen extends StatelessWidget {
             await userDoc.update({
               'presensi': true,
               'hadir': (data['hadir'] ?? 0) + 1,
-              'alpa': ((data['alpa'] ?? 0) - 1).clamp(0, double.infinity),
+              // 'alpa': ((data['alpa'] ?? 0) - 1).clamp(0, double.infinity),
             });
             showAlertDialog(context);
           }

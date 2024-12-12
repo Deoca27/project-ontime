@@ -75,7 +75,7 @@ class AuthController extends GetxController {
           // Update field presensi menjadi false dan alpa +1
           await userDocRef.update({
           'presensi': false,
-          'alpa': (userDoc['alpa'] ?? 0) + 1, // Tambahkan 1 ke field alpa
+          // 'alpa': (userDoc['alpa'] ?? 0) + 1, // Tambahkan 1 ke field alpa
         });
 
           print("User data: ${userDoc.data()}");
