@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:myapp/app/modules/sccreen/home_screen.dart';
-import 'package:myapp/app/modules/sccreen/kehadiran.dart';
-import 'package:myapp/app/modules/sccreen/profil.dart';
+import 'package:myapp/app/modules/screens/home_screen.dart';
+import 'package:myapp/app/modules/screens/kehadiran.dart';
+import 'package:myapp/app/modules/screens/profil.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({super.key});
