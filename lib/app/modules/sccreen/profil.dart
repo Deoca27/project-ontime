@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 // import 'package:get/route_manager.dart';
 import 'package:get/get.dart';
 import 'package:myapp/app/controllers/auth_controller.dart';
+import 'package:myapp/app/routes/app_pages.dart';
 // import 'package:myapp/app/modules/login/views/login_view.dart';
 // import 'package:project_ontime/event/event_pref.dart';
 // import 'package:project_ontime/screen/login.dart';
@@ -33,7 +34,7 @@ class _ProfilState extends State<Profil> {
               title: const Text('Change Password'),
               trailing: const Icon(Icons.arrow_forward_ios, size: 16),
               onTap: () {
-                // Navigate to change password page
+                Get.toNamed(Routes.RESET_PASSWORD);
               },
             ),
             Divider(height: 1, color: Colors.grey.shade300),
