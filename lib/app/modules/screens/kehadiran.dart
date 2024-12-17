@@ -20,6 +20,8 @@ class _KehadiranState extends State<Kehadiran> {
   int izinAbsen = 0;
   int izinSakit = 0;
 
+  bool kehadiran = false;
+
   @override
   void initState() {
     super.initState();
@@ -33,6 +35,8 @@ class _KehadiranState extends State<Kehadiran> {
         jumlahHadir = data['hadir'] ?? 0;
         izinAbsen = data['alpa'] ?? 0;
         izinSakit = data['izin'] ?? 0;
+
+        kehadiran = data['presensi'] ?? false;
       });
     }
   }
@@ -79,6 +83,36 @@ class _KehadiranState extends State<Kehadiran> {
                 eventLoader: (day) {
                   return []; // Tidak ada acara
                 },
+
+                calendarBuilders: CalendarBuilders(
+                  markerBuilder: (context, date, events) {
+                    DateTime today = DateTime.now();
+
+                    if (date.year == today.year && date.month == today.month && date.day == today.day) {
+                      if (kehadiran) {
+                        return Positioned(
+                          bottom: 1,
+                          child: Container(
+                            width: 30,
+                            height: 10,
+                            color: Colors.green, // Warna kotak hijau jika true
+                          ),
+                        );
+                      } else {
+                        return Positioned(
+                          bottom: 1,
+                          child: Container(
+                            width: 30,
+                            height: 10,
+                            color: Colors.red, // Warna kotak merah jika false
+                          ),
+                        );
+                      }
+                    } 
+                    return null; // Tidak ada tanda pada tanggal lainnya
+                  },
+                ),
+
                 calendarStyle: CalendarStyle(
                   todayDecoration: BoxDecoration(
                     color: Colors.blue,
@@ -86,7 +120,7 @@ class _KehadiranState extends State<Kehadiran> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   selectedDecoration: BoxDecoration(
-                    color: Colors.green,
+                    color: Colors.grey,
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.circular(8),
                   ),
