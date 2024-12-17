@@ -93,18 +93,36 @@ class _KehadiranState extends State<Kehadiran> {
                         return Positioned(
                           bottom: 1,
                           child: Container(
-                            width: 30,
-                            height: 10,
+                            width: 35,
+                            height: 15,
+                            decoration: BoxDecoration(
                             color: Colors.green, // Warna kotak hijau jika true
+                            borderRadius: BorderRadius.circular(8), // Ujung melengkung
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Hadir',  // Teks yang ingin ditampilkan
+                                style: TextStyle(color: Colors.white, fontSize: 9),
+                              ),
+                            ),
                           ),
                         );
                       } else {
                         return Positioned(
                           bottom: 1,
                           child: Container(
-                            width: 30,
-                            height: 10,
-                            color: Colors.red, // Warna kotak merah jika false
+                            width: 35,
+                            height: 15,
+                            decoration: BoxDecoration(
+                            color: Colors.red, // Warna kotak hijau jika true
+                            borderRadius: BorderRadius.circular(8), // Ujung melengkung
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Alpa',  // Teks yang ingin ditampilkan
+                                style: TextStyle(color: Colors.white, fontSize: 9),
+                              ),
+                            ),
                           ),
                         );
                       }
@@ -115,7 +133,7 @@ class _KehadiranState extends State<Kehadiran> {
 
                 calendarStyle: CalendarStyle(
                   todayDecoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: Colors.blue[900],
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.circular(8),
                   ),
