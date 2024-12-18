@@ -134,13 +134,11 @@ class _KehadiranState extends State<Kehadiran> {
                 calendarStyle: CalendarStyle(
                   todayDecoration: BoxDecoration(
                     color: Colors.blue[900],
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(8),
+                    shape: BoxShape.circle,
                   ),
                   selectedDecoration: BoxDecoration(
                     color: Colors.grey,
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(8),
+                    shape: BoxShape.circle,
                   ),
                 ),
                 headerStyle: const HeaderStyle(
